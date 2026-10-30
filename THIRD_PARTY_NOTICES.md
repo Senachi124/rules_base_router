@@ -1,6 +1,6 @@
 # Third-party components
 
-RouteBar code is licensed under Mozilla Public License 2.0. Dependencies retain their own licenses; see their source distributions and `Cargo.lock` for exact pinned versions and transitive dependencies.
+RouteBar code is licensed under the MIT License; see `LICENSE`. Dependencies retain their own licenses; see their source distributions and `Cargo.lock` for exact pinned versions and transitive dependencies.
 
 | Component | Purpose | Upstream | License |
 |---|---|---|---|

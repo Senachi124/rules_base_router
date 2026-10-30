@@ -2,7 +2,7 @@
 name = "routebar-v2"
 version = "0.2.0"
 edition = "2021"
-license = "MPL-2.0"
+license = "MIT"
 description = "Certificate-free macOS routing controller compatible with vpnctl v2"
 
 [dependencies]

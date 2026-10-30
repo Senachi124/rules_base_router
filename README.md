@@ -77,4 +77,4 @@ The current VPN data path uses `controller/` and sing-box. The original Network 
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes. Never commit real WireGuard profiles, private keys, local configuration or service logs; use [config.example.yaml](config.example.yaml) as a template.
 
-Project source is licensed under [MPL-2.0](LICENSE). Dependencies retain their respective licenses. sing-box is a separate executable distributed under GPL-3.0-or-later; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistributing binaries.
+Project source is licensed under [MIT](LICENSE). Dependencies retain their respective licenses. sing-box is a separate executable distributed under GPL-3.0-or-later; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistributing binaries.

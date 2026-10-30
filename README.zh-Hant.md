@@ -73,4 +73,4 @@ python3 scripts/test-whitelist-integration.py
 
 提交前請閱讀 [CONTRIBUTING.md](CONTRIBUTING.md)。不要提交真實 VPN 設定檔、私鑰、個人配置或日誌；可由 [config.example.yaml](config.example.yaml) 建立本機設定。
 
-本專案原始碼採用 [MPL-2.0](LICENSE)。各依賴保留本身授權；sing-box 為 GPL-3.0-or-later 獨立 executable。重新分發 binary 前請閱讀 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+本專案原始碼採用 [MIT](LICENSE)。各依賴保留本身授權；sing-box 為 GPL-3.0-or-later 獨立 executable。重新分發 binary 前請閱讀 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
