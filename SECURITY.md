@@ -1,8 +1,26 @@
 # Security scope
 
-RouteBar is a local macOS routing application. The source has automated security-boundary tests and development review, but has not undergone an independent security audit.
+RouteBar is a local macOS and Windows routing application. The source has automated security-boundary tests and development review, but has not undergone an independent security audit.
 
-## Privilege boundary
+## Windows preview
+
+The Windows client elevates the complete desktop application through UAC to
+connect. It does not use the macOS session helper described below. Its trusted
+code includes the desktop app, bundled controller and engine. Store the portable
+package in a trusted location; elevation does not protect modified binaries.
+
+Imported profiles and runtime snapshots are plaintext in ACL-protected storage,
+restricted to the owner, SYSTEM and administrators. They are not stored in
+Keychain or an encrypted Windows vault. Normal disconnect/exit removes runtime
+snapshots, while imported profiles remain. Forced termination or power loss can
+leave protected temporary files. The controller owns a kill-on-close Windows
+Job Object, and the desktop app closes its stdin to request shutdown.
+
+Windows has no persistent service or auto-connect. The preview requires live
+acceptance testing for VPN egress and OS route cleanup; offline tests do not
+prove these behaviors. See [Windows details](docs/WINDOWS.md).
+
+## macOS privilege boundary
 
 Administrator authorization starts a helper for one exact app process. It is not a stored password, a sudoers exception or a permanently reusable authorization token. The app checks the helper's root socket identity before sending configuration; the helper checks the client's UID, PID and start time. Requests use a fixed command set and a bounded schema.
 

@@ -168,6 +168,40 @@ pub fn app_regex(path: &str) -> String {
     escaped
 }
 
+fn normalized_app_path(path: &Path) -> String {
+    let path = clean_path(path);
+    let value = path
+        .canonicalize()
+        .unwrap_or(path)
+        .to_string_lossy()
+        .into_owned();
+    #[cfg(windows)]
+    {
+        // canonicalize returns verbatim paths, while Windows process lookup uses
+        // ordinary drive/UNC paths. Keep the spelling consistent with the engine.
+        let value = value
+            .strip_prefix(r"\\?\UNC\")
+            .map(|p| format!(r"\\{p}"))
+            .unwrap_or_else(|| value.strip_prefix(r"\\?\").unwrap_or(&value).to_owned());
+        value.replace('/', r"\")
+    }
+    #[cfg(not(windows))]
+    value
+}
+
+#[cfg(windows)]
+pub fn windows_app_regex(path: &str) -> String {
+    let mut result = String::from("(?i)^");
+    for ch in path.chars() {
+        if r"\.+*?()|[]{}^$".contains(ch) {
+            result.push('\\');
+        }
+        result.push(ch);
+    }
+    result.push('$');
+    result
+}
+
 impl Config {
     pub fn load(path: &Path) -> Result<Self, String> {
         use std::io::Read;
@@ -280,18 +314,17 @@ impl Config {
                     return Err(format!("rule {} app paths must be absolute", index + 1));
                 }
                 let path = clean_path(Path::new(app));
-                if path == Path::new("/") {
-                    return Err(format!("rule {} app path cannot be /", index + 1));
+                if path.parent().is_none() {
+                    return Err(format!(
+                        "rule {} app path cannot be a filesystem root",
+                        index + 1
+                    ));
                 }
-                *app = path
-                    .canonicalize()
-                    .unwrap_or(path)
-                    .to_string_lossy()
-                    .into_owned();
+                *app = normalized_app_path(&path);
             }
             if m.process_names
                 .iter()
-                .any(|name| name.is_empty() || name.contains(['/', '\0', '\n', '\r']))
+                .any(|name| name.is_empty() || name.contains(['/', '\\', '\0', '\n', '\r']))
             {
                 return Err(format!("rule {} has an invalid process name", index + 1));
             }
@@ -317,12 +350,7 @@ impl Config {
         let mut flow = flow.clone();
         flow.domain = normalize_domain(&flow.domain);
         if !flow.app.is_empty() {
-            let path = clean_path(Path::new(&flow.app));
-            flow.app = path
-                .canonicalize()
-                .unwrap_or(path)
-                .to_string_lossy()
-                .into_owned();
+            flow.app = normalized_app_path(Path::new(&flow.app));
             if flow.process_name.is_empty() {
                 flow.process_name = Path::new(&flow.app)
                     .file_name()
@@ -351,8 +379,15 @@ impl Match {
     pub fn matches(&self, flow: &Flow) -> bool {
         let app = (self.apps.is_empty() && self.process_names.is_empty())
             || self.apps.iter().any(|app| {
-                flow.app == *app
-                    || app.ends_with(".app") && flow.app.starts_with(&format!("{app}/"))
+                #[cfg(windows)]
+                {
+                    flow.app.eq_ignore_ascii_case(app)
+                }
+                #[cfg(not(windows))]
+                {
+                    flow.app == *app
+                        || app.ends_with(".app") && flow.app.starts_with(&format!("{app}/"))
+                }
             })
             || self.process_names.contains(&flow.process_name);
         let destination = (self.domains.is_empty()
@@ -373,8 +408,10 @@ impl Match {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(not(windows))]
     const EXAMPLE: &str = "version: 1\nvpns: {japan: {wireguard_config: ./conf/japan.conf}}\nrouting:\n  rules:\n    - {name: company, match: {domain_suffixes: [company.example]}, via: direct}\n    - {name: browser, match: {apps: [/Applications/Browser.app]}, via: japan}\n    - {name: destinations, match: {domains: [api.example.com], domain_suffixes: [example.org], ip_cidrs: [203.0.113.0/24]}, via: japan}\n    - {name: combined, match: {apps: [/usr/bin/curl], process_names: [wget], domains: [conditional.example]}, via: japan}\n";
     #[test]
+    #[cfg(not(windows))]
     fn routing_priority_boundaries_and_groups() {
         let mut c = Config::from_text(EXAMPLE, Path::new("/settings/config.yaml")).unwrap();
         assert_eq!(
@@ -438,6 +475,78 @@ mod tests {
             })
             .via,
             "japan"
+        );
+    }
+    #[test]
+    #[cfg(windows)]
+    fn windows_paths_priority_and_compound_selectors() {
+        let c = Config::from_text(
+            r#"
+version: 1
+vpns: {work: {wireguard_config: ./profiles/work.conf}}
+routing:
+  rules:
+    - {name: exception, match: {domain_suffixes: [company.example]}, via: direct}
+    - name: browser
+      match:
+        apps: ['C:/Program Files/Browser/browser.exe']
+        process_names: [curl.exe]
+        domain_suffixes: [example.org]
+        ip_cidrs: [203.0.113.0/24]
+      via: work
+"#,
+            Path::new(r"C:\settings\config.yaml"),
+        )
+        .unwrap();
+        assert_eq!(
+            c.vpns["work"].wireguard_config,
+            r"C:\settings\profiles\work.conf"
+        );
+        assert_eq!(
+            c.routing.rules[1].r#match.apps[0],
+            r"C:\Program Files\Browser\browser.exe"
+        );
+        for (app, process, domain, ip, via) in [
+            (
+                r"c:\PROGRAM FILES\Browser\browser.exe",
+                "",
+                "sub.example.org",
+                "",
+                "work",
+            ),
+            (
+                r"C:/Program Files/Browser/browser.exe",
+                "",
+                "company.example",
+                "",
+                "direct",
+            ),
+            (
+                r"C:\Program Files\Browser\browser.exe.evil",
+                "",
+                "example.org",
+                "",
+                "direct",
+            ),
+            ("", "curl.exe", "example.org", "", "work"),
+            ("", "curl.exe", "notexample.org", "", "direct"),
+            ("", "curl.exe", "", "203.0.113.17", "work"),
+            ("", "other.exe", "example.org", "", "direct"),
+        ] {
+            assert_eq!(
+                c.explain(&Flow {
+                    app: app.into(),
+                    process_name: process.into(),
+                    domain: domain.into(),
+                    ip: ip.parse().ok()
+                })
+                .via,
+                via
+            );
+        }
+        assert_eq!(
+            normalized_app_path(Path::new(r"\\?\C:\unlikely\app.exe")),
+            r"C:\unlikely\app.exe"
         );
     }
     #[test]

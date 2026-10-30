@@ -3,7 +3,7 @@ name = "routebar-v2"
 version = "0.2.0"
 edition = "2021"
 license = "MIT"
-description = "Certificate-free macOS routing controller compatible with vpnctl v2"
+description = "macOS and Windows routing controller compatible with vpnctl v2"
 
 [dependencies]
 base64 = "0.22"
@@ -12,3 +12,6 @@ libc = "0.2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_yaml = "0.9"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_Security", "Win32_Security_Authorization", "Win32_Storage_FileSystem", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_System_Console"] }

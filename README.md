@@ -1,6 +1,26 @@
 # Rules Base Router
 
-A native macOS app for sending selected applications and websites through WireGuard VPNs while keeping other traffic direct.
+A native macOS and Windows app for sending selected applications and websites through WireGuard VPNs while keeping other traffic direct.
+
+## Windows version (this fork)
+
+This fork adds a native Windows 10/11 x64 desktop client, Windows path matching,
+ACL-protected configuration, foreground VPN lifecycle with rollback, a portable
+build script, and Windows CI. The original macOS app remains available.
+
+```powershell
+git clone https://github.com/Senachi124/rules_base_router.git
+cd rules_base_router
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1
+.\build\RouteBar-windows-x64\RouteBar.exe
+```
+
+Build requirements: Rust/rustup and Visual Studio C++ Build Tools with the Windows
+SDK. The UI uses the .NET Framework included in Windows. Output includes a
+portable ZIP. See **[Windows setup, usage and validation](docs/WINDOWS.md)**.
+This is a Windows preview: offline tests do not establish real VPN egress.
+
+## macOS version (upstream)
 
 The application is called **RouteBar**. It combines a SwiftUI interface, a Rust routing controller, and a bundled sing-box engine. The current app can be built and used locally without an Apple Developer certificate or Network Extension entitlement. System routing still requires macOS administrator authorization.
 

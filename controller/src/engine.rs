@@ -4,7 +4,9 @@ use crate::{
     wireguard,
 };
 use serde_json::{json, Value};
-use std::{collections::BTreeMap, os::unix::fs::PermissionsExt, path::Path};
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
+use std::{collections::BTreeMap, path::Path};
 
 pub struct Generated {
     pub json: Value,
@@ -15,10 +17,12 @@ pub struct Generated {
 pub fn generate(config: &Config) -> Result<Generated, String> {
     let mut profiles = BTreeMap::new();
     let mut endpoints = vec![];
+    #[allow(unused_mut)]
     let mut warnings = vec![];
     for (name, vpn) in &config.vpns {
         let wg = wireguard::Config::load(Path::new(&vpn.wireguard_config))
             .map_err(|e| format!("VPN {name}: {e}"))?;
+        #[cfg(unix)]
         if std::fs::metadata(&vpn.wireguard_config)
             .is_ok_and(|m| m.permissions().mode() & 0o077 != 0)
         {
@@ -100,6 +104,11 @@ fn generate_with_profiles(
         "outbounds": [{"type": "direct", "tag": "direct", "domain_resolver": "vpnctl-dns"}],
         "route": {"auto_detect_interface": true, "find_process": true, "default_domain_resolver": "vpnctl-bootstrap", "rules": rules, "final": config.routing.default}
     });
+    #[cfg(windows)]
+    {
+        root["inbounds"][0]["interface_name"] = json!("RouteBar");
+        root["inbounds"][0]["strict_route"] = json!(true);
+    }
     if !endpoints.is_empty() {
         root["endpoints"] = json!(endpoints);
     }
@@ -134,22 +143,34 @@ fn family_guards(profile: Option<&wireguard::Config>, selector: Option<Value>) -
 pub fn compile_match(selector: &Match) -> Value {
     let mut groups = vec![];
     let mut apps = vec![];
-    let paths: Vec<_> = selector
-        .apps
-        .iter()
-        .filter(|s| !s.ends_with(".app"))
-        .collect();
-    let bundles: Vec<_> = selector
-        .apps
-        .iter()
-        .filter(|s| s.ends_with(".app"))
-        .map(|s| config::app_regex(s))
-        .collect();
-    if !paths.is_empty() {
-        apps.push(json!({"process_path": paths}));
+    #[cfg(windows)]
+    if !selector.apps.is_empty() {
+        let paths: Vec<_> = selector
+            .apps
+            .iter()
+            .map(|p| config::windows_app_regex(p))
+            .collect();
+        apps.push(json!({"process_path_regex": paths}));
     }
-    if !bundles.is_empty() {
-        apps.push(json!({"process_path_regex": bundles}));
+    #[cfg(not(windows))]
+    {
+        let paths: Vec<_> = selector
+            .apps
+            .iter()
+            .filter(|s| !s.ends_with(".app"))
+            .collect();
+        let bundles: Vec<_> = selector
+            .apps
+            .iter()
+            .filter(|s| s.ends_with(".app"))
+            .map(|s| config::app_regex(s))
+            .collect();
+        if !paths.is_empty() {
+            apps.push(json!({"process_path": paths}));
+        }
+        if !bundles.is_empty() {
+            apps.push(json!({"process_path_regex": bundles}));
+        }
     }
     if !selector.process_names.is_empty() {
         apps.push(json!({"process_name": selector.process_names}));
@@ -217,6 +238,9 @@ fn visit_secrets(value: &mut Value, visit: &mut impl FnMut(&mut Value)) {
 mod tests {
     use super::*;
     fn config() -> Config {
+        #[cfg(windows)]
+        return Config::from_text("version: 1\nvpns: {jp: {wireguard_config: C:/tmp/test.conf}}\nrouting:\n  rules:\n    - {name: exception, match: {domain_suffixes: [company.example]}, via: direct}\n    - {name: browser, match: {apps: ['C:/Program Files/A+B/app.exe'], process_names: [curl.exe], domains: [example.org]}, via: jp}\n", Path::new("C:/config.yaml")).unwrap();
+        #[cfg(not(windows))]
         Config::from_text("version: 1\nvpns: {jp: {wireguard_config: /tmp/test.conf}}\nrouting:\n  rules:\n    - {name: exception, match: {domain_suffixes: [company.example]}, via: direct}\n    - {name: browser, match: {apps: [/Applications/A+B.app], process_names: [curl], domains: [example.org]}, via: jp}\n", Path::new("/config.yaml")).unwrap()
     }
     fn profiles() -> BTreeMap<String, wireguard::Config> {
@@ -247,10 +271,19 @@ mod tests {
             compile_match(&c.routing.rules[1].r#match)
         );
         assert_eq!(rules[4]["rules"][1]["ip_version"], 6);
+        #[cfg(not(windows))]
         assert_eq!(
             rules[5]["rules"][0]["rules"][0]["process_path_regex"],
             json!(["^/Applications/A\\+B\\.app/"])
         );
+        #[cfg(windows)]
+        {
+            assert_eq!(
+                rules[5]["rules"][0]["rules"][0]["process_path_regex"],
+                json!([r"(?i)^C:\\Program Files\\A\+B\\app\.exe$"])
+            );
+            assert_eq!(generated.json["inbounds"][0]["strict_route"], true);
+        }
         assert_eq!(rules[5]["rules"][0]["mode"], "or");
         assert_eq!(rules[5]["mode"], "and");
         assert_eq!(generated.json["route"]["final"], "direct");

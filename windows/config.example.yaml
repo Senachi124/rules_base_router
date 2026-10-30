@@ -1,0 +1,25 @@
+version: 1
+vpns:
+  work_vpn:
+    wireguard_config: ./conf/work-vpn.conf
+dns:
+  server: 1.1.1.1
+  via: direct
+  strategy: auto
+routing:
+  default: direct
+  rules:
+    - name: Direct exception
+      match:
+        domain_suffixes: [company.example]
+      via: direct
+    - name: Browser work sites
+      match:
+        # Single quotes preserve Windows backslashes in YAML.
+        apps: ['C:\Program Files\Google\Chrome\Application\chrome.exe']
+        domain_suffixes: [example.org]
+      via: work_vpn
+    - name: Selected process
+      match:
+        process_names: [curl.exe]
+      via: work_vpn

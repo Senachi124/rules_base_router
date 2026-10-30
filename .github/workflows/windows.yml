@@ -1,0 +1,26 @@
+name: Windows
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Build and verify Windows x64
+        shell: powershell
+        run: ./scripts/test-windows.ps1
+      - name: Package portable app
+        shell: powershell
+        run: ./scripts/build-windows.ps1 -SkipRustBuild
+      - uses: actions/upload-artifact@v7
+        with:
+          name: RouteBar-windows-x64
+          path: build/RouteBar-windows-x64.zip
+          if-no-files-found: error
