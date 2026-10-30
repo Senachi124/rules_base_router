@@ -1,0 +1,14 @@
+[package]
+name = "routebar-v2"
+version = "0.2.0"
+edition = "2021"
+license = "MPL-2.0"
+description = "Certificate-free macOS routing controller compatible with vpnctl v2"
+
+[dependencies]
+base64 = "0.22"
+ipnet = { version = "2", features = ["serde"] }
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"

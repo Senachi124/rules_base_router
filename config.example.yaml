@@ -1,0 +1,58 @@
+version: 1
+
+vpns:
+  work_vpn:
+    # Relative paths resolve from this YAML file, not the current directory.
+    wireguard_config: ./conf/work-vpn.conf
+
+# DNS is a separate global policy, because macOS can resolve DNS in a shared
+# system process. Set via to work_vpn to send DNS through that tunnel.
+# If server is omitted with a VPN via, its .conf DNS server is used when present.
+dns:
+  server: 1.1.1.1
+  via: direct
+  strategy: auto
+
+routing:
+  # Optional: omitted means direct.
+  default: direct
+  # First matching rule wins; app and destination groups in one rule are AND.
+  rules:
+    - name: Company exception
+      match:
+        domain_suffixes:
+          - company.example
+      via: direct
+
+    - name: Selected apps
+      match:
+        apps:
+          # Replace these examples with the installed application paths.
+          - /Applications/ChatGPT.app
+          - /Applications/Safari.app
+      via: work_vpn
+
+    # This matches Safari's external network helper and other WebKit apps.
+    - name: Safari and shared WebKit networking
+      match:
+        process_names: [com.apple.WebKit.Networking]
+      via: work_vpn
+
+    - name: Selected destinations
+      match:
+        domains:
+          - api.example.com
+        domain_suffixes:
+          - example.org
+        ip_cidrs:
+          - 203.0.113.0/24
+      via: work_vpn
+
+    # Example: only curl connections to this domain use the VPN.
+    - name: Conditional app rule
+      match:
+        process_names:
+          - curl
+        domains:
+          - www.cloudflare.com
+      via: work_vpn

@@ -1,0 +1,649 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		11F357C3F1E859CDD60DB122 /* CoreBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13DF5F045D9A724E1638DF82 /* CoreBridge.swift */; };
+		20CB3BABAE89FF49668BC3E0 /* TunnelEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D8EB008B4E42270635BFE /* TunnelEngine.swift */; };
+		27AF9C1678C3C6BD6801CEBD /* SigningIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325E588B5B742726E0FF99DA /* SigningIdentity.swift */; };
+		291CE3876EEA55EDECC26569 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7093627EC378D83C14ADE7A /* NetworkExtension.framework */; };
+		2AA92C76E0E045C01AC5A1CF /* V2Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AC3CE2CDE0394A3A8DB2CD /* V2Backend.swift */; };
+		2DE849CEEA43157C726B2902 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC6FF6C35A7FF175700A214 /* PacketTunnelProvider.swift */; };
+		3672DD0151E52893537F5D13 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BCB7B38531FA9DDBFFDD03 /* Models.swift */; };
+		3F2C46F2D0388D8064BAF98B /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843EEC7806B9A6B29D567F14 /* KeychainStore.swift */; };
+		5A9882DA243C464DA5784D5C /* VPNController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF8FF146657D39038A1CE7 /* VPNController.swift */; };
+		5E7D715124E691A28E2F3FF0 /* SigningIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325E588B5B742726E0FF99DA /* SigningIdentity.swift */; };
+		606845BC345B528489C061FA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1B339611B8E63FFAC82F10 /* AppModel.swift */; };
+		6390B2095D2C0A5C497D4AE5 /* DNSWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373F0BB721B249C6D4902C48 /* DNSWire.swift */; };
+		684E98A59F84B62272241725 /* WhitelistModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611AFDAD0EF3EC006027FFB8 /* WhitelistModels.swift */; };
+		6A6A4723973FEAAED43B7A42 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BCB7B38531FA9DDBFFDD03 /* Models.swift */; };
+		6BB5E9AF975A6306315F9677 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 567407A146C60CB3789C0A46 /* Security.framework */; };
+		727E0532DC16371C083461BE /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BCB7B38531FA9DDBFFDD03 /* Models.swift */; };
+		7423D328FF32BD55FA719114 /* DNSWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373F0BB721B249C6D4902C48 /* DNSWire.swift */; };
+		79C22A5C9836A253F4FF2DFA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F64CFF6537E9854B4F7A96 /* main.swift */; };
+		8222D1E042D851E07F41C513 /* CoreBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13DF5F045D9A724E1638DF82 /* CoreBridge.swift */; };
+		8C340115630BB11F9C4FBA6A /* TransparentProxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147A2F89CE5E678591D6383D /* TransparentProxyProvider.swift */; };
+		948C2B2E49AA339F0B8D52EC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D875784845D66BD99F97F6 /* main.swift */; };
+		9EB934F8C7AE013F0EBB996A /* RouteBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C4B2D86B5BA281FCC3EF40 /* RouteBarApp.swift */; };
+		A4F5C6122CD15E33E394DC2C /* SigningIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325E588B5B742726E0FF99DA /* SigningIdentity.swift */; };
+		AA4E1A586BDFAB9028935715 /* SessionAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F042F089A28610250E0731 /* SessionAuthorization.swift */; };
+		AED8600F24E5131E470988C2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 567407A146C60CB3789C0A46 /* Security.framework */; };
+		B6336317DA128C5954955065 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7093627EC378D83C14ADE7A /* NetworkExtension.framework */; };
+		B6835926E5FD7A3DDF80C533 /* TunnelEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554D8EB008B4E42270635BFE /* TunnelEngine.swift */; };
+		BBBDBC3706E0B169041D1D39 /* CoreBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13DF5F045D9A724E1638DF82 /* CoreBridge.swift */; };
+		BFA9CF28D1167A62C09EEF8F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 567407A146C60CB3789C0A46 /* Security.framework */; };
+		D2DB4781645B5E043FAFBA23 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843EEC7806B9A6B29D567F14 /* KeychainStore.swift */; };
+		F4189301592698C061AAC450 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843EEC7806B9A6B29D567F14 /* KeychainStore.swift */; };
+		F851878A8BF00CBDFB23ACEF /* DNSWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373F0BB721B249C6D4902C48 /* DNSWire.swift */; };
+		FB4340560CB4153FAFA2BD61 /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98C32D3638B7A4C8DA69EE9 /* SettingsViews.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05A9AFF4F2BB076654DC5F58 /* RouteBarProxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RouteBarProxy.entitlements; sourceTree = "<group>"; };
+		07BCB7B38531FA9DDBFFDD03 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		13DF5F045D9A724E1638DF82 /* CoreBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBridge.swift; sourceTree = "<group>"; };
+		147A2F89CE5E678591D6383D /* TransparentProxyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentProxyProvider.swift; sourceTree = "<group>"; };
+		289FE0CC9268B56EF9AB9E4C /* RouteBarTunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RouteBarTunnel.entitlements; sourceTree = "<group>"; };
+		28F64CFF6537E9854B4F7A96 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		325E588B5B742726E0FF99DA /* SigningIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningIdentity.swift; sourceTree = "<group>"; };
+		373F0BB721B249C6D4902C48 /* DNSWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DNSWire.swift; sourceTree = "<group>"; };
+		3EEDCDDB7D77ECC91E52C7BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		49AC3CE2CDE0394A3A8DB2CD /* V2Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2Backend.swift; sourceTree = "<group>"; };
+		554D8EB008B4E42270635BFE /* TunnelEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelEngine.swift; sourceTree = "<group>"; };
+		567407A146C60CB3789C0A46 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		611AFDAD0EF3EC006027FFB8 /* WhitelistModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistModels.swift; sourceTree = "<group>"; };
+		843EEC7806B9A6B29D567F14 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		88F042F089A28610250E0731 /* SessionAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionAuthorization.swift; sourceTree = "<group>"; };
+		93C2FCCD94D33F27297A4A27 /* RouteBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RouteBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADC6FF6C35A7FF175700A214 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		AF54534CA36218BF318DAA8E /* RouteBarTunnel.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = RouteBarTunnel.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
+		B85379F87304F8E7D98470D1 /* RouteBar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RouteBar.entitlements; sourceTree = "<group>"; };
+		BC04D9E9889C4443958CED84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BDDE7EE59C0C51911527C602 /* RouteBarProxy.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = RouteBarProxy.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2C4B2D86B5BA281FCC3EF40 /* RouteBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBarApp.swift; sourceTree = "<group>"; };
+		D3A315D4B3F9F745CB1F4C54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D6D875784845D66BD99F97F6 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		D7AF8FF146657D39038A1CE7 /* VPNController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNController.swift; sourceTree = "<group>"; };
+		D98C32D3638B7A4C8DA69EE9 /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
+		E7093627EC378D83C14ADE7A /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		FE1B339611B8E63FFAC82F10 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AB65DEBDCBF0879C3CBE48A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				291CE3876EEA55EDECC26569 /* NetworkExtension.framework in Frameworks */,
+				6BB5E9AF975A6306315F9677 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CA81782DADFC1ECAFB99C929 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6336317DA128C5954955065 /* NetworkExtension.framework in Frameworks */,
+				BFA9CF28D1167A62C09EEF8F /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE13530D2C80BF97CFBBD7DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AED8600F24E5131E470988C2 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		145393A740773B4DAE90310F = {
+			isa = PBXGroup;
+			children = (
+				D08010FD78FD82F341D60EED /* App */,
+				E4DA50E44970DC50BB1EF624 /* PacketExtension */,
+				643DEF0D2477D2D7EBE5C849 /* ProxyExtension */,
+				A6317C617D62E8380A992D2D /* Shared */,
+				5329C193659183F61636EA13 /* Frameworks */,
+				BA2C96FA7EC2C951DE4C6409 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5329C193659183F61636EA13 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E7093627EC378D83C14ADE7A /* NetworkExtension.framework */,
+				567407A146C60CB3789C0A46 /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		643DEF0D2477D2D7EBE5C849 /* ProxyExtension */ = {
+			isa = PBXGroup;
+			children = (
+				D3A315D4B3F9F745CB1F4C54 /* Info.plist */,
+				28F64CFF6537E9854B4F7A96 /* main.swift */,
+				05A9AFF4F2BB076654DC5F58 /* RouteBarProxy.entitlements */,
+				147A2F89CE5E678591D6383D /* TransparentProxyProvider.swift */,
+			);
+			name = ProxyExtension;
+			path = macos/ProxyExtension;
+			sourceTree = "<group>";
+		};
+		A6317C617D62E8380A992D2D /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				13DF5F045D9A724E1638DF82 /* CoreBridge.swift */,
+				373F0BB721B249C6D4902C48 /* DNSWire.swift */,
+				843EEC7806B9A6B29D567F14 /* KeychainStore.swift */,
+				07BCB7B38531FA9DDBFFDD03 /* Models.swift */,
+				88F042F089A28610250E0731 /* SessionAuthorization.swift */,
+				325E588B5B742726E0FF99DA /* SigningIdentity.swift */,
+				554D8EB008B4E42270635BFE /* TunnelEngine.swift */,
+				49AC3CE2CDE0394A3A8DB2CD /* V2Backend.swift */,
+				611AFDAD0EF3EC006027FFB8 /* WhitelistModels.swift */,
+			);
+			name = Shared;
+			path = macos/Shared;
+			sourceTree = "<group>";
+		};
+		BA2C96FA7EC2C951DE4C6409 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				93C2FCCD94D33F27297A4A27 /* RouteBar.app */,
+				BDDE7EE59C0C51911527C602 /* RouteBarProxy.systemextension */,
+				AF54534CA36218BF318DAA8E /* RouteBarTunnel.systemextension */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D08010FD78FD82F341D60EED /* App */ = {
+			isa = PBXGroup;
+			children = (
+				FE1B339611B8E63FFAC82F10 /* AppModel.swift */,
+				3EEDCDDB7D77ECC91E52C7BE /* Info.plist */,
+				B85379F87304F8E7D98470D1 /* RouteBar.entitlements */,
+				C2C4B2D86B5BA281FCC3EF40 /* RouteBarApp.swift */,
+				D98C32D3638B7A4C8DA69EE9 /* SettingsViews.swift */,
+				D7AF8FF146657D39038A1CE7 /* VPNController.swift */,
+			);
+			name = App;
+			path = macos/App;
+			sourceTree = "<group>";
+		};
+		E4DA50E44970DC50BB1EF624 /* PacketExtension */ = {
+			isa = PBXGroup;
+			children = (
+				BC04D9E9889C4443958CED84 /* Info.plist */,
+				D6D875784845D66BD99F97F6 /* main.swift */,
+				ADC6FF6C35A7FF175700A214 /* PacketTunnelProvider.swift */,
+				289FE0CC9268B56EF9AB9E4C /* RouteBarTunnel.entitlements */,
+			);
+			name = PacketExtension;
+			path = macos/PacketExtension;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B41E6DFF7BDEAEF4A2C13F50 /* RouteBarTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B54F1A5D41DD9BD75B028F9 /* Build configuration list for PBXNativeTarget "RouteBarTunnel" */;
+			buildPhases = (
+				5256428CEDF6BA84C6ACEF85 /* Sources */,
+				CA81782DADFC1ECAFB99C929 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RouteBarTunnel;
+			packageProductDependencies = (
+			);
+			productName = RouteBarTunnel;
+			productReference = AF54534CA36218BF318DAA8E /* RouteBarTunnel.systemextension */;
+			productType = "com.apple.product-type.system-extension";
+		};
+		B714C9A9A6A34DE5E507BB27 /* RouteBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD11392EEB15B805FE2617F9 /* Build configuration list for PBXNativeTarget "RouteBar" */;
+			buildPhases = (
+				06A6C249F0B0B71FB6A09847 /* Sources */,
+				EE13530D2C80BF97CFBBD7DF /* Frameworks */,
+				FA8C29FFD6D9892DCE57AAB1 /* Bundle certificate-free backend */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RouteBar;
+			packageProductDependencies = (
+			);
+			productName = RouteBar;
+			productReference = 93C2FCCD94D33F27297A4A27 /* RouteBar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EF18AEEACC3DAF8DA6F60E5A /* RouteBarProxy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 195B915DB4E8D8799FC3CD5C /* Build configuration list for PBXNativeTarget "RouteBarProxy" */;
+			buildPhases = (
+				3F8BC85AD9F2621F8DACC20D /* Sources */,
+				AB65DEBDCBF0879C3CBE48A8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RouteBarProxy;
+			packageProductDependencies = (
+			);
+			productName = RouteBarProxy;
+			productReference = BDDE7EE59C0C51911527C602 /* RouteBarProxy.systemextension */;
+			productType = "com.apple.product-type.system-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD6CFC8A90CD6C6B89A6D12D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					B41E6DFF7BDEAEF4A2C13F50 = {
+						ProvisioningStyle = Automatic;
+					};
+					B714C9A9A6A34DE5E507BB27 = {
+						ProvisioningStyle = Automatic;
+					};
+					EF18AEEACC3DAF8DA6F60E5A = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 968B1C4825E18B50D42E6CBC /* Build configuration list for PBXProject "RouteBar" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 145393A740773B4DAE90310F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BA2C96FA7EC2C951DE4C6409 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B714C9A9A6A34DE5E507BB27 /* RouteBar */,
+				EF18AEEACC3DAF8DA6F60E5A /* RouteBarProxy */,
+				B41E6DFF7BDEAEF4A2C13F50 /* RouteBarTunnel */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FA8C29FFD6D9892DCE57AAB1 /* Bundle certificate-free backend */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle certificate-free backend";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/scripts/package-backend.sh\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		06A6C249F0B0B71FB6A09847 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				606845BC345B528489C061FA /* AppModel.swift in Sources */,
+				BBBDBC3706E0B169041D1D39 /* CoreBridge.swift in Sources */,
+				F851878A8BF00CBDFB23ACEF /* DNSWire.swift in Sources */,
+				F4189301592698C061AAC450 /* KeychainStore.swift in Sources */,
+				727E0532DC16371C083461BE /* Models.swift in Sources */,
+				9EB934F8C7AE013F0EBB996A /* RouteBarApp.swift in Sources */,
+				AA4E1A586BDFAB9028935715 /* SessionAuthorization.swift in Sources */,
+				FB4340560CB4153FAFA2BD61 /* SettingsViews.swift in Sources */,
+				27AF9C1678C3C6BD6801CEBD /* SigningIdentity.swift in Sources */,
+				2AA92C76E0E045C01AC5A1CF /* V2Backend.swift in Sources */,
+				5A9882DA243C464DA5784D5C /* VPNController.swift in Sources */,
+				684E98A59F84B62272241725 /* WhitelistModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F8BC85AD9F2621F8DACC20D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8222D1E042D851E07F41C513 /* CoreBridge.swift in Sources */,
+				6390B2095D2C0A5C497D4AE5 /* DNSWire.swift in Sources */,
+				D2DB4781645B5E043FAFBA23 /* KeychainStore.swift in Sources */,
+				6A6A4723973FEAAED43B7A42 /* Models.swift in Sources */,
+				5E7D715124E691A28E2F3FF0 /* SigningIdentity.swift in Sources */,
+				8C340115630BB11F9C4FBA6A /* TransparentProxyProvider.swift in Sources */,
+				20CB3BABAE89FF49668BC3E0 /* TunnelEngine.swift in Sources */,
+				79C22A5C9836A253F4FF2DFA /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5256428CEDF6BA84C6ACEF85 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11F357C3F1E859CDD60DB122 /* CoreBridge.swift in Sources */,
+				7423D328FF32BD55FA719114 /* DNSWire.swift in Sources */,
+				3F2C46F2D0388D8064BAF98B /* KeychainStore.swift in Sources */,
+				3672DD0151E52893537F5D13 /* Models.swift in Sources */,
+				2DE849CEEA43157C726B2902 /* PacketTunnelProvider.swift in Sources */,
+				A4F5C6122CD15E33E394DC2C /* SigningIdentity.swift in Sources */,
+				B6835926E5FD7A3DDF80C533 /* TunnelEngine.swift in Sources */,
+				948C2B2E49AA339F0B8D52EC /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		15CB89C99949F4364219A104 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = macos/PacketExtension/RouteBarTunnel.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_NAME = RouteBarTunnel;
+				INFOPLIST_FILE = macos/PacketExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.tunnel;
+				PRODUCT_MODULE_NAME = RouteBarTunnel;
+				PRODUCT_NAME = com.routebar.tunnel;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1A745AD575035D936C983D99 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = macos/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.app;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2B0E84A2C0DF964BE0D32590 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = macos/ProxyExtension/RouteBarProxy.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_NAME = RouteBarProxy;
+				INFOPLIST_FILE = macos/ProxyExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.proxy;
+				PRODUCT_MODULE_NAME = RouteBarProxy;
+				PRODUCT_NAME = com.routebar.proxy;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		3304A7A09F41C12C430F83C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = macos/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.app;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		331BC4E3FF62F516251BA764 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = macos/ProxyExtension/RouteBarProxy.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_NAME = RouteBarProxy;
+				INFOPLIST_FILE = macos/ProxyExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.proxy;
+				PRODUCT_MODULE_NAME = RouteBarProxy;
+				PRODUCT_NAME = com.routebar.proxy;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		38984CE06B06DE869C7F4B8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				LIBRARY_SEARCH_PATHS = "$(inherited) $(SRCROOT)/target/release";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "$(inherited) -lroutebar_core -framework Security -framework SystemConfiguration -lresolv";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/include/RouteBarCore.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5A22ED4EF18A3C3F040F83D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				LIBRARY_SEARCH_PATHS = "$(inherited) $(SRCROOT)/target/release";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "$(inherited) -lroutebar_core -framework Security -framework SystemConfiguration -lresolv";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/include/RouteBarCore.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A1711EAEDE71A6D2D7ECD4A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = macos/PacketExtension/RouteBarTunnel.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_NAME = RouteBarTunnel;
+				INFOPLIST_FILE = macos/PacketExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.routebar.tunnel;
+				PRODUCT_MODULE_NAME = RouteBarTunnel;
+				PRODUCT_NAME = com.routebar.tunnel;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		195B915DB4E8D8799FC3CD5C /* Build configuration list for PBXNativeTarget "RouteBarProxy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				331BC4E3FF62F516251BA764 /* Debug */,
+				2B0E84A2C0DF964BE0D32590 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6B54F1A5D41DD9BD75B028F9 /* Build configuration list for PBXNativeTarget "RouteBarTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1711EAEDE71A6D2D7ECD4A8 /* Debug */,
+				15CB89C99949F4364219A104 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		968B1C4825E18B50D42E6CBC /* Build configuration list for PBXProject "RouteBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38984CE06B06DE869C7F4B8E /* Debug */,
+				5A22ED4EF18A3C3F040F83D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CD11392EEB15B805FE2617F9 /* Build configuration list for PBXNativeTarget "RouteBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A745AD575035D936C983D99 /* Debug */,
+				3304A7A09F41C12C430F83C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD6CFC8A90CD6C6B89A6D12D /* Project object */;
+}

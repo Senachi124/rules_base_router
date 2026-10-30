@@ -1,0 +1,129 @@
+name: RouteBar
+options:
+  minimumXcodeGenVersion: 2.44.0
+  deploymentTarget:
+    macOS: '13.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    MACOSX_DEPLOYMENT_TARGET: '13.0'
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_OBJC_BRIDGING_HEADER: $(SRCROOT)/include/RouteBarCore.h
+    LIBRARY_SEARCH_PATHS: $(inherited) $(SRCROOT)/target/release
+    OTHER_LDFLAGS: $(inherited) -lroutebar_core -framework Security -framework SystemConfiguration -lresolv
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: '1'
+    GENERATE_INFOPLIST_FILE: NO
+targets:
+  RouteBar:
+    type: application
+    platform: macOS
+    sources:
+      - macos/App
+      - path: macos/Shared
+        excludes: [TunnelEngine.swift]
+    info:
+      path: macos/App/Info.plist
+      properties:
+        CFBundleDisplayName: RouteBar
+        LSUIElement: true
+        NSPrincipalClass: NSApplication
+        RouteBarBuildChannel: DevelopmentPreview
+        RouteBarBackend: RustV2
+        NSHumanReadableCopyright: Copyright © 2026 RouteBar contributors
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.routebar.app
+    postBuildScripts:
+      - name: Bundle certificate-free backend
+        script: '"$SRCROOT/scripts/package-backend.sh" "$TARGET_BUILD_DIR/$WRAPPER_NAME"'
+        basedOnDependencyAnalysis: false
+    dependencies:
+      - sdk: Security.framework
+  RouteBarProxy:
+    type: system-extension
+    platform: macOS
+    sources:
+      - macos/ProxyExtension
+      - path: macos/Shared
+        excludes: [V2Backend.swift, WhitelistModels.swift, SessionAuthorization.swift]
+    info:
+      path: macos/ProxyExtension/Info.plist
+      properties:
+        CFBundleDisplayName: RouteBar Split Tunnel
+        CFBundlePackageType: SYSX
+        NSSystemExtensionUsageDescription: RouteBar needs this extension to route selected apps and domains through your VPN.
+        RouteBarKeychainGroup: $(AppIdentifierPrefix)com.routebar.shared
+        NetworkExtension:
+          NEMachServiceName: $(TeamIdentifierPrefix)com.routebar.shared.proxy
+          NEProviderClasses:
+            com.apple.networkextension.app-proxy: $(PRODUCT_MODULE_NAME).TransparentProxyProvider
+    entitlements:
+      path: macos/ProxyExtension/RouteBarProxy.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
+        com.apple.security.application-groups:
+          - $(TeamIdentifierPrefix)com.routebar.shared
+        com.apple.developer.networking.networkextension:
+          - app-proxy-provider-systemextension
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.routebar.shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.routebar.proxy
+      PRODUCT_NAME: com.routebar.proxy
+      PRODUCT_MODULE_NAME: RouteBarProxy
+      EXECUTABLE_NAME: RouteBarProxy
+      SKIP_INSTALL: YES
+    dependencies:
+      - sdk: NetworkExtension.framework
+      - sdk: Security.framework
+  RouteBarTunnel:
+    type: system-extension
+    platform: macOS
+    sources:
+      - macos/PacketExtension
+      - path: macos/Shared
+        excludes: [V2Backend.swift, WhitelistModels.swift, SessionAuthorization.swift]
+    info:
+      path: macos/PacketExtension/Info.plist
+      properties:
+        CFBundleDisplayName: RouteBar Full Tunnel
+        CFBundlePackageType: SYSX
+        NSSystemExtensionUsageDescription: RouteBar needs this extension to route this Mac through your VPN.
+        RouteBarKeychainGroup: $(AppIdentifierPrefix)com.routebar.shared
+        NetworkExtension:
+          NEMachServiceName: $(TeamIdentifierPrefix)com.routebar.shared.tunnel
+          NEProviderClasses:
+            com.apple.networkextension.packet-tunnel: $(PRODUCT_MODULE_NAME).PacketTunnelProvider
+    entitlements:
+      path: macos/PacketExtension/RouteBarTunnel.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
+        com.apple.security.application-groups:
+          - $(TeamIdentifierPrefix)com.routebar.shared
+        com.apple.developer.networking.networkextension:
+          - packet-tunnel-provider-systemextension
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.routebar.shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.routebar.tunnel
+      PRODUCT_NAME: com.routebar.tunnel
+      PRODUCT_MODULE_NAME: RouteBarTunnel
+      EXECUTABLE_NAME: RouteBarTunnel
+      SKIP_INSTALL: YES
+    dependencies:
+      - sdk: NetworkExtension.framework
+      - sdk: Security.framework
+schemes:
+  RouteBar:
+    build:
+      targets:
+        RouteBar: all
+    run:
+      config: Debug
+    archive:
+      config: Release
