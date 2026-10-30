@@ -61,6 +61,9 @@ def main():
         assert private not in serialized and shared not in serialized
         assert generated["inbounds"][0]["strict_route"] is True
         assert generated["dns"]["servers"][1]["detour"] == "work"
+        assert generated["endpoints"][0]["detour"] == "vpnctl-transport"
+        transport = next(o for o in generated["outbounds"] if o["tag"] == "vpnctl-transport")
+        assert transport["type"] == "direct" and transport["domain_resolver"] == "vpnctl-bootstrap"
         route = next(r for r in generated["route"]["rules"] if r.get("outbound") == "work")
         pattern = route["rules"][0]["rules"][0]["process_path_regex"][0]
         assert re.fullmatch(pattern, app.lower())

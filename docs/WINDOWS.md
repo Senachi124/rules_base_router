@@ -27,22 +27,59 @@ binaries are unsigned. Source retains the original macOS implementation.
 
 1. Open `RouteBar.exe`. Editing and validation do not require administrator rights.
 2. Under **VPN exits**, import an exported WireGuard `.conf`. Imports are copied
-   into an ACL-protected local folder and assigned names `vpn`, `vpn2`, etc.
+   into an ACL-protected local folder and receive unique exit names derived from
+   the source filename.
 3. Under **Routing rules**, add applications, process names (include `.exe`),
    domains, domain suffixes or IP ranges; select the exit. Semicolons separate
    multiple selectors. Move rules up/down to set first-match priority.
-4. Set the DNS server/exit and default route under **DNS & default route**, then
-   press **Save DNS & default**. DNS is an independent global policy.
-5. **Validate** checks profiles and the real bundled engine without starting it.
+4. Set the DNS server/exit and default route under **DNS and default route**, then
+   press **Save DNS and default**. DNS is an independent global policy. The
+   configuration state distinguishes unsaved settings and changes awaiting Apply.
+5. **Validate visible settings** checks the displayed draft, profiles and bundled
+   engine without starting it. Warnings appear above the tabs and in Logs. Invalid
+   rules remain in their editor so they can be corrected.
 6. Stop other VPNs. Press **Connect**. If not elevated, Windows asks for UAC
-   authorization and opens a new elevated window. Press **Connect** again there.
+   authorization and hands off to one elevated window, which connects after
+   loading the validated settings. Cancelling UAC leaves the editor available.
    Use the same Windows account for editing and elevation; another administrator
    account has its own settings and profiles.
 7. After edits, **Apply changes** validates a private snapshot before stopping the
-   current engine. Failed startup attempts to restore the previous snapshot.
+   current engine. Failed startup attempts to restore the previous snapshot,
+   even if deletion of a temporary snapshot fails. Cleanup warnings appear in Logs.
 8. **Disconnect** stops routing and removes its snapshot. Minimizing hides the
    window in the notification area. Closing or choosing **Exit and disconnect**
    stops the VPN and exits. There is no boot service or auto-connect.
+
+Opening the app again activates its owning window. If Windows prevents activation
+across privilege levels, use the existing administrator window; a second window
+does not claim that its connection is disconnected. Unsaved edits survive Validate
+and Disconnect, and closing prompts to save or discard them.
+`RouteBar.exe --connect` explicitly requests a connection on launch; normal
+launches only edit.
+
+## Use your own VM as the default exit
+
+RouteBar connects directly to a standard WireGuard server and does **not** require
+NordVPN, its account, service, or adapters. On the server, configure a dedicated
+WireGuard peer, enable IP forwarding, permit its UDP listen port, and allow/NAT
+only the peer's assigned IPv4 and (if supported) IPv6 addresses to the Internet.
+Keep management SSH access and existing firewall rules. The server's peer
+AllowedIPs identify the client's tunnel addresses; the client profile normally
+uses `AllowedIPs = 0.0.0.0/0, ::/0` for a dual-stack exit.
+
+Import that client profile, select its exit for **Unmatched traffic** and **DNS
+exit**, and choose a reachable DNS server such as `1.1.1.1`. With no exception
+rules, all traffic captured by the TUN uses that exit. The tunnel endpoint itself
+uses a separate direct transport, including on Windows adapters with IPv6
+disabled; endpoint hostname resolution uses the bootstrap resolver so it cannot
+depend on a tunnel that has not connected yet.
+
+For acceptance testing, disconnect other system VPNs yourself, connect RouteBar,
+and compare the public IPv4/IPv6 addresses with your VM. Check DNS, browser traffic,
+Disconnect, and reconnect. Other VPNs' kill switches may block this independent
+transport; RouteBar does not change their settings. Local-network routes and other
+VPN-specific routes are not a guarantee that every packet is captured. No kill
+switch is provided.
 
 The status means the engine process is running; it does not confirm a WireGuard
 handshake, egress IP, or real application attribution. There is no kill switch;
@@ -97,19 +134,21 @@ The desktop app owns connect/disconnect, live process status and rollback.
 ## Validation scope
 
 `scripts/test-windows.ps1` runs Rust controller tests, clippy, formatting,
-desktop smoke tests and real-engine schema checks with synthetic profiles.
+desktop smoke tests, isolated UI/lifecycle regression tests and real-engine schema
+checks with synthetic profiles.
 It never opens a TUN adapter or starts a system VPN. A real WireGuard profile
 and administrator-led acceptance checks are still required for handshake,
 per-application/domain egress, IPv4/IPv6, DNS, restart/rollback and route cleanup
 on the target Windows machine. macOS UI tests must run separately on a Mac.
 
-Local validation on Windows passed the 13 Rust tests, clippy, the real-engine
-integration suite, the native UI construction smoke test, and the x64 build.
-The macOS controller also passed cross-target compilation checks; its existing
-CLI source is unchanged.
-The window and its controls were detected by UI automation, but the automation
-host could not activate the window, so visual/interactive acceptance remains
-outstanding. No real VPN connection was started during development validation.
+The UI regression suite uses private temporary settings and fake connection
+lifecycles; it does not access personal profiles or start a system VPN. Its layout
+checks are control-bound/offscreen checks, not a real monitor-DPI or screen-reader
+acceptance test. Live WireGuard handshake, IPv4/IPv6 egress and UDP DNS have been
+checked separately with localhost-only proxy inbounds. That does not certify
+system TUN routing, UAC, or operation after disconnecting another VPN. Those
+checks remain acceptance tests on the target PC. The original macOS CLI is
+unchanged; macOS UI acceptance needs a Mac.
 
 The bundled engine and its DLL retain upstream licenses. See
 `Licenses/THIRD_PARTY_NOTICES.md` in the package (or `THIRD_PARTY_NOTICES.md` in

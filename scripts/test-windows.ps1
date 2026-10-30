@@ -28,6 +28,7 @@ try {
         & $testExe --self-test
         if ($LASTEXITCODE -ne 0) { throw 'UI self-test failed.' }
     } finally { if (Test-Path -LiteralPath $testExe) { Remove-Item -LiteralPath $testExe } }
+    & "$PSScriptRoot/test-windows-ui.ps1"
     & git diff --check
     if ($LASTEXITCODE -ne 0) { throw 'Whitespace check failed.' }
     Write-Output 'Windows checks passed. No system VPN was started.'

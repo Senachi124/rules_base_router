@@ -108,7 +108,25 @@ fn generate_with_profiles(
     {
         root["inbounds"][0]["interface_name"] = json!("RouteBar");
         root["inbounds"][0]["strict_route"] = json!(true);
+        if !endpoints.is_empty() {
+            // A detour uses the peer's address family rather than the engine's
+            // dual-stack listener. On Windows an IPv6-disabled physical adapter
+            // otherwise makes the WireGuard bind fail even for an IPv4 peer.
+            // Keep endpoint DNS independent of DNS routed inside the tunnel.
+            root["outbounds"].as_array_mut().unwrap().push(json!({
+                "type": "direct", "tag": "vpnctl-transport",
+                "domain_resolver": "vpnctl-bootstrap"
+            }));
+        }
     }
+    #[cfg(windows)]
+    let endpoints: Vec<Value> = endpoints
+        .into_iter()
+        .map(|mut endpoint| {
+            endpoint["detour"] = json!("vpnctl-transport");
+            endpoint
+        })
+        .collect();
     if !endpoints.is_empty() {
         root["endpoints"] = json!(endpoints);
     }
@@ -364,6 +382,18 @@ mod tests {
             c.vpns.get_mut("jp").unwrap().wireguard_config = profile_path.to_string_lossy().into();
             let generated = generate(&c).unwrap();
             assert_eq!(generated.dns_strategy, strategy);
+            #[cfg(windows)]
+            {
+                assert_eq!(generated.json["endpoints"][0]["detour"], "vpnctl-transport");
+                let transport = generated.json["outbounds"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|outbound| outbound["tag"] == "vpnctl-transport")
+                    .unwrap();
+                assert_eq!(transport["type"], "direct");
+                assert_eq!(transport["domain_resolver"], "vpnctl-bootstrap");
+            }
             assert_eq!(
                 generated.json["endpoints"][0]["peers"][0]["persistent_keepalive_interval"],
                 25
