@@ -1,4 +1,4 @@
-# RouteBar for Windows 0.2.1
+# RouteBar for Windows 0.2.2
 
 Windows 10/11 x64 預覽版。這個版本預設將 Codex 經 `vm1`，其他程式 direct；
 DNS 統一經 `vm1`。沒有開機自動連線，也沒有 kill switch。
@@ -36,7 +36,7 @@ Licenses/
 ```
 
 可以將整個資料夾放在桌面，或建立 `RouteBar.exe` 的桌面捷徑。不能只複製一個
-EXE。更新時先退出舊版（會斷線），再開啟新版；標題應顯示 `0.2.1`。
+EXE。更新時先退出舊版（會斷線），再開啟新版；標題應顯示 `0.2.2`。
 `BUILD-INFO.json` 記錄版本、來源 commit 和打包時間。
 
 使用環境需要 .NET Framework 4.8/4.8.1，以及 Visual C++ v14 **x64** Runtime
@@ -74,6 +74,12 @@ JSON/YAML 只儲存規則和 profile 路徑，沒有內嵌私人金鑰。匯出 
 
 ## 測試與限制
 
+0.2.2 會按引擎監測的預設出口網卡，獨立判斷 direct 的 IPv6 能力；不再因為
+vm1 支援 IPv6 就略過檢查。使用預設程序規則時，無可用 direct IPv6 會在 TCP
+握手完成前拒絕，讓客戶端回退 IPv4。Codex 經 vm1 的 IPv6 及 DNS `prefer_ipv4`
+均保留。這是網卡位址檢查，不能偵測所有上游 IPv6 故障。域名規則仍按順序做
+協定偵測，可能要接受連線後才能判斷出口。
+
 建置及離線測試：
 
 ```powershell
@@ -81,7 +87,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-windows.ps1
 ```
 
 涵蓋 Rust、引擎 schema、UI／連線生命週期、Codex 預設規則、現有設定保留等測試，
-不會啟動系統 VPN。實機已觀察到全機 tunnel 的 IPv4/IPv6 vm1 出口及正常 DNS，
+以及 32 個使用真正引擎的本機回環連線測試（程序名、IPv4/IPv6、direct 規則／
+預設出口、模擬網卡狀態）。回環測試以本機出口代替 vm1，並非實際 WireGuard
+握手或系統 TUN pre-match 驗收。測試不會啟動系統 VPN。
+在已確認 direct 沒有 IPv6 的電腦，可用 `scripts/test-windows-routing.py
+--app-directory <bundle> --check-current-ipv6-unavailable` 加跑 16 個使用實際
+網卡判斷條件的回環測試。
+
+先前版本實機已觀察到全機 tunnel 的 IPv4/IPv6 vm1 出口及正常 DNS，
 亦已觀察到分流模式下非 Codex 程式 direct 出口。Codex process 規則已驗證配對；
 未對每個 Codex 子程序逐一抓包，未完成所有重連／跨權限／螢幕 DPI 驗收。
 

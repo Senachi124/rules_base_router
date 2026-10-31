@@ -2,7 +2,7 @@
 
 ## 本 fork 新增 Windows 版
 
-**Windows 0.2.1 預設分流：** `ChatGPT.exe`、`codex.exe`、
+**Windows 0.2.2 預設分流：** `ChatGPT.exe`、`codex.exe`、
 `codex-code-mode-host.exe` 經 `vm1`，其他流量 direct，DNS 經 `vm1`。
 首次啟動會準備好規則，只需匯入私人 WireGuard profile；已有設定不會被覆蓋。
 repo 不包含私人 profile 或金鑰。

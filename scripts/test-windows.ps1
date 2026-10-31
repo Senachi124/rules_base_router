@@ -21,6 +21,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Windows CLI formatting check failed.' }
     & python scripts/test-windows-integration.py --app-directory $AppDirectory
     if ($LASTEXITCODE -ne 0) { throw 'Windows integration checks failed.' }
+    & python scripts/test-windows-routing.py --app-directory $AppDirectory
+    if ($LASTEXITCODE -ne 0) { throw 'Loopback routing checks failed.' }
     $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
     $testExe = Join-Path $AppDirectory 'RouteBar.Tests.exe'
     $source = (Resolve-Path -LiteralPath 'windows/RouteBar.cs').Path

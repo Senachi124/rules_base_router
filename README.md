@@ -4,7 +4,7 @@ A native macOS and Windows app for sending selected applications and websites th
 
 ## Windows version (this fork)
 
-**Windows 0.2.1 default:** Codex processes (`ChatGPT.exe`, `codex.exe`,
+**Windows 0.2.2 default:** Codex processes (`ChatGPT.exe`, `codex.exe`,
 `codex-code-mode-host.exe`) route through `vm1`; other traffic is direct; DNS
 uses `vm1`. First launch prepares these rules and asks for your private WireGuard
 profile. Existing saved settings are preserved. No personal profiles or keys

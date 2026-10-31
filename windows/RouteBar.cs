@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-[assembly: System.Reflection.AssemblyVersion("0.2.1.0")]
-[assembly: System.Reflection.AssemblyFileVersion("0.2.1.0")]
+[assembly: System.Reflection.AssemblyVersion("0.2.2.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.2.2.0")]
 
 namespace RouteBar.Windows
 {
@@ -429,7 +429,7 @@ namespace RouteBar.Windows
         internal MainForm(AppServices appServices, bool initializeServices, bool autoConnect, InstanceLease instance)
         {
             services = appServices; initialize = initializeServices; connectOnLoad = autoConnect; lease = instance;
-            Text = "RouteBar for Windows 0.2.1"; Font = new Font("Segoe UI", 10); AutoScaleDimensions = new SizeF(7F, 19F); AutoScaleMode = AutoScaleMode.Font;
+            Text = "RouteBar for Windows 0.2.2"; Font = new Font("Segoe UI", 10); AutoScaleDimensions = new SizeF(7F, 19F); AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1080, 760); MinimumSize = new Size(760, 560); StartPosition = FormStartPosition.CenterScreen; BackColor = SystemColors.Control;
             var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(20), RowCount = 7, ColumnCount = 1 };
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));

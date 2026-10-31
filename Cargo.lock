@@ -693,7 +693,7 @@ dependencies = [
 
 [[package]]
 name = "routebar-v2"
-version = "0.2.0"
+version = "0.2.2"
 dependencies = [
  "base64",
  "ipnet",

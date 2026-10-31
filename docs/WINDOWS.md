@@ -1,4 +1,4 @@
-# RouteBar for Windows 0.2.1
+# RouteBar for Windows 0.2.2
 
 Native Windows 10/11 **x64** preview, using the shared Rust routing compiler and
 the pinned sing-box 1.14.4 Windows engine. The desktop app uses .NET Framework
@@ -45,13 +45,13 @@ binaries are unsigned. Source retains the original macOS implementation.
 Keep `RouteBar.exe`, `routebar-v2.exe`, `sing-box.exe`, `libcronet.dll` and the
 included documentation/licenses together. Copy the whole folder to your desktop
 or create a shortcut; copying only the UI executable is insufficient. Exit the
-old app before upgrading (this disconnects its VPN). The title shows `0.2.1`,
+old app before upgrading (this disconnects its VPN). The title shows `0.2.2`,
 and `BUILD-INFO.json` records the build version, source commit and timestamp.
 The archive is assembled from an explicit file list, excluding personal profiles
 and settings even if they were placed beside the executable.
 To build beside a currently running version, use
-`scripts/test-windows.ps1 -AppDirectory build/RouteBar-windows-x64-0.2.1`, then
-`scripts/build-windows.ps1 -SkipRustBuild -OutputDirectory build/RouteBar-windows-x64-0.2.1`.
+`scripts/test-windows.ps1 -AppDirectory build/RouteBar-windows-x64-0.2.2`, then
+`scripts/build-windows.ps1 -SkipRustBuild -OutputDirectory build/RouteBar-windows-x64-0.2.2`.
 This produces a separate versioned folder and ZIP without replacing running files.
 
 ## Use
@@ -69,7 +69,7 @@ This produces a separate versioned folder and ZIP without replacing running file
 5. **Validate visible settings** checks the displayed draft, profiles and bundled
    engine without starting it. Warnings appear above the tabs and in Logs. Invalid
    rules remain in their editor so they can be corrected.
-6. Stop other VPNs. Press **Connect**. If not elevated, Windows asks for UAC
+6. Press **Connect**. If not elevated, Windows asks for UAC
    authorization and hands off to one elevated window, which connects after
    loading the validated settings. Cancelling UAC leaves the editor available.
    Use the same Windows account for editing and elevation; another administrator
@@ -164,9 +164,24 @@ The desktop app owns connect/disconnect, live process status and rollback.
 
 ## Validation scope
 
+Version 0.2.2 checks direct IPv6 against the engine's monitored default interface,
+independently of the capabilities of vm1. With the default process-only rules,
+unavailable direct IPv6 is rejected during TUN pre-match, allowing clients to
+fall back to IPv4 without a successful TCP handshake followed by a reset.
+Codex's vm1 IPv6 and DNS `prefer_ipv4` remain enabled. This checks interface
+addresses, not end-to-end IPv6 reachability; an upstream IPv6 outage can still fail.
+Domain selectors retain ordered sniffing, which may require accepting a connection
+before its destination rule can be determined.
+
 `scripts/test-windows.ps1` runs Rust controller tests, clippy, formatting,
 desktop smoke tests, isolated UI/lifecycle regression tests and real-engine schema
-checks with synthetic profiles.
+checks with synthetic profiles. It also runs 32 real-engine loopback probes with
+the actual Codex process names, IPv4/IPv6, explicit/default direct routing and
+simulated interface states. The remote VPN is replaced by a loopback test outbound;
+this verifies routing without testing a real WireGuard handshake or TUN pre-match.
+On a host known to lack direct IPv6, add `--check-current-ipv6-unavailable` when
+running `scripts/test-windows-routing.py --app-directory <bundle>` to run 16 more
+probes against the actual interface-address predicate, without simulating it.
 It never opens a TUN adapter or starts a system VPN. A real WireGuard profile
 and administrator-led acceptance checks are still required for handshake,
 per-application/domain egress, IPv4/IPv6, DNS, restart/rollback and route cleanup
