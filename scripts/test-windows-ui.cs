@@ -55,6 +55,7 @@ namespace RouteBar.Windows
                 Run("editable fields expose accessible names", AccessibleFields);
                 Run("rule actions fit minimum size at standard and larger font", RuleActionsFitMinimumSize);
                 Run("minimum main window contains toolbar and DNS content width", MinimumMainWindow);
+                Run("fresh installs use Codex preset without replacing saved settings", DefaultCodexPreset);
                 Console.WriteLine("Windows UI regression tests passed: " + Passed.Count + ". No VPN or UAC was started.");
             }
             catch (Exception error)
@@ -78,6 +79,28 @@ namespace RouteBar.Windows
         {
             Console.WriteLine("RUN: " + name);
             action(); Passed.Add(name); Console.WriteLine("PASS: " + name);
+        }
+        private static void DefaultCodexPreset()
+        {
+            string root = Path.Combine(stateRoot, "default-preset"); Store.PrivateDirectory(root);
+            var services = new AppServices(root, SafeCall);
+            var doc = services.LoadOrDefault();
+            Check(!File.Exists(services.ConfigPath), "Reading defaults silently saved an unconfigured profile.");
+            Check(doc.routing.@default == "direct" && doc.dns.via == "vm1" && doc.dns.strategy == "prefer_ipv4", "Preset routing/DNS changed.");
+            Check(doc.routing.rules.Count == 1 && doc.routing.rules[0].via == "vm1", "Expected one Codex rule.");
+            Check(doc.routing.rules[0].match.process_names.SequenceEqual(new[] { "ChatGPT.exe", "codex.exe", "codex-code-mode-host.exe" }), "Codex process selectors changed.");
+            Check(doc.routing.rules[0].match.apps.Length == 0 && doc.routing.rules[0].match.domains.Length == 0, "Preset unexpectedly restricts apps/domains.");
+            Check(DefaultPreset.NeedsProfile(doc, root), "Fresh install must request a private profile.");
+            Check(MainForm.ProfileImportTag(doc, root, "downloaded-provider.conf") == "vm1", "First profile import must fill the preset exit.");
+            Check(services.Normalize(doc).routing.rules.Count == 1, "Preset failed real controller schema.");
+            Store.Write(Path.Combine(root, "vm1.conf"), "Synthetic file used only to test existence; never connected.");
+            Check(!DefaultPreset.NeedsProfile(doc, root), "Existing profile was treated as missing.");
+            Check(MainForm.ProfileImportTag(doc, root, "vm1.conf") == "vm1-2", "Import would overwrite an existing vm1 profile.");
+            var custom = new Document(); custom.dns.server = "9.9.9.9";
+            custom.routing.rules.Add(new Rule { name = "User rule", match = new Selectors { domains = new[] { "example.org" } } });
+            services.Save(custom);
+            var loaded = services.LoadOrDefault();
+            Check(loaded.dns.server == "9.9.9.9" && loaded.vpns.Count == 0 && loaded.routing.rules.Single().name == "User rule", "Startup replaced an existing user's settings with defaults.");
         }
         private static void CreateUiHandles(Control control)
         {

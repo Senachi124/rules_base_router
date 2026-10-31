@@ -1,5 +1,6 @@
 """Offline Windows CLI -> actual sing-box checks; never starts a TUN/VPN."""
 import base64
+import argparse
 import json
 from pathlib import Path
 import re
@@ -7,7 +8,9 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-CLI = ROOT / "build/RouteBar-windows-x64/routebar-v2.exe"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--app-directory", type=Path, default=ROOT / "build/RouteBar-windows-x64")
+CLI = parser.parse_args().app_directory.resolve() / "routebar-v2.exe"
 ENGINE = CLI.with_name("sing-box.exe")
 
 
@@ -45,6 +48,18 @@ def main():
         source.write_text(json.dumps(config), encoding="utf-8")
         inspected = call("config-inspect", "-c", source)
         assert Path(inspected["vpns"]["work"]["wireguard_config"]) == profile
+        # The distributable default template contains rules only, never real keys.
+        preset = folder / "config.example.yaml"
+        preset.write_bytes((ROOT / "windows/config.example.yaml").read_bytes())
+        (folder / "vm1.conf").write_bytes(profile.read_bytes())
+        defaults = call("config-inspect", "-c", preset)
+        assert defaults["routing"]["default"] == "direct" and defaults["dns"]["via"] == "vm1"
+        assert len(defaults["routing"]["rules"]) == 1
+        assert call("validate", "-c", preset)["valid"]
+        for process in ("ChatGPT.exe", "codex.exe", "codex-code-mode-host.exe"):
+            assert call("explain", "-c", preset, "--process", process, "--domain", "example.org")["via"] == "vm1"
+        for process in ("chrome.exe", "msedge.exe", "curl.exe", "python.exe", "git.exe"):
+            assert call("explain", "-c", preset, "--process", process, "--domain", "example.org")["via"] == "direct"
         assert call("validate", "-c", source, "--engine", ENGINE)["valid"]
         for flow, expected in [
             (["--app", app.lower(), "--domain", "sub.example.org"], "work"),

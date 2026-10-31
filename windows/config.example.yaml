@@ -1,25 +1,22 @@
+# Default Windows preset. No private profile is included in this repository.
+# To import this file, place your private vm1.conf beside it first.
+# Alternatively, first launch the app and import a profile under VPN exits;
+# the app fills the prepared vm1 exit and copies the profile into its own store.
 version: 1
 vpns:
-  work_vpn:
-    wireguard_config: ./conf/work-vpn.conf
+  vm1:
+    wireguard_config: ./vm1.conf
 dns:
   server: 1.1.1.1
-  via: direct
-  strategy: auto
+  via: vm1
+  strategy: prefer_ipv4
 routing:
   default: direct
   rules:
-    - name: Direct exception
+    - name: codex
       match:
-        domain_suffixes: [company.example]
-      via: direct
-    - name: Browser work sites
-      match:
-        # Single quotes preserve Windows backslashes in YAML.
-        apps: ['C:\Program Files\Google\Chrome\Application\chrome.exe']
-        domain_suffixes: [example.org]
-      via: work_vpn
-    - name: Selected process
-      match:
-        process_names: [curl.exe]
-      via: work_vpn
+        process_names:
+          - ChatGPT.exe
+          - codex.exe
+          - codex-code-mode-host.exe
+      via: vm1

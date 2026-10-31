@@ -2,6 +2,12 @@
 
 ## 本 fork 新增 Windows 版
 
+**Windows 0.2.1 預設分流：** `ChatGPT.exe`、`codex.exe`、
+`codex-code-mode-host.exe` 經 `vm1`，其他流量 direct，DNS 經 `vm1`。
+首次啟動會準備好規則，只需匯入私人 WireGuard profile；已有設定不會被覆蓋。
+repo 不包含私人 profile 或金鑰。
+[繁體中文使用及儲存說明](docs/WINDOWS.zh-Hant.md) · [版本紀錄](windows/CHANGELOG.md)
+
 支援 Windows 10/11 x64，提供原生桌面介面、WireGuard 匯入、應用程式／網域／IP
 規則、DNS 設定、驗證、連線及斷線。保留原有 macOS 程式。
 
@@ -14,11 +20,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1
 
 編譯需要 Rust/rustup、Visual Studio C++ Build Tools 及 Windows SDK。
 完成後亦會產生 `build/RouteBar-windows-x64.zip`，解壓後保留所有檔案即可使用。
-按 Connect 時需要管理員授權；授權後的新視窗需再次按 Connect。
+按 Connect 時需要管理員授權；授權後會交接至管理員視窗並連線。
 最小化會留在通知區，關閉程式會停止 VPN，沒有開機服務。
 
-目前是 Windows 預覽版；已驗證離線規則及引擎設定，實際 VPN 握手、出口 IP
-與系統路由清理仍需使用真實設定檔驗收。完整說明見 [Windows 文件](docs/WINDOWS.md)。
+目前是 Windows 預覽版；離線測試及實機出口／DNS 檢查已通過，完整的路由清理、
+重連及跨權限驗收仍需在目標電腦進行。完整範圍見 [Windows 文件](docs/WINDOWS.zh-Hant.md)。
 
 ## 原有 macOS 版
 

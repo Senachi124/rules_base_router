@@ -1,9 +1,29 @@
-# RouteBar for Windows
+# RouteBar for Windows 0.2.1
 
 Native Windows 10/11 **x64** preview, using the shared Rust routing compiler and
 the pinned sing-box 1.14.4 Windows engine. The desktop app uses .NET Framework
 4.8 (included in current Windows 10/11 installations). No WSL, Go or .NET SDK is
 needed. ARM64 and 32-bit Windows are not supported by this package.
+The current controller also requires the Microsoft Visual C++ v14 **x64** Runtime
+(`VCRUNTIME140.dll`). Install it from the
+[official Microsoft downloads](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+if missing. Traditional Chinese instructions are in `README.zh-Hant.md` in the
+package, or [docs/WINDOWS.zh-Hant.md](https://github.com/Senachi124/rules_base_router/blob/main/docs/WINDOWS.zh-Hant.md)
+in the source repository.
+
+## Default Codex routing
+
+On first launch without a saved configuration, the app prepares one `codex` rule:
+`ChatGPT.exe`, `codex.exe` and `codex-code-mode-host.exe` use `vm1`; unmatched
+traffic uses `direct`. DNS uses `1.1.1.1` through `vm1`, with `prefer_ipv4`.
+Child tools such as `python.exe`, `git.exe` and separate browsers do not inherit
+the Codex rule. Existing saved settings are never replaced by this preset.
+
+No private WireGuard profile or personal server address ships with the app.
+Import your profile under **VPN exits** to fill the initial unresolved `vm1`
+exit. The app copies it into managed storage; later imports get unique exit names
+and do not overwrite a working profile. The package's `config.example.yaml`
+contains the same rules; importing that file requires a `vm1.conf` beside it.
 
 ## Build
 
@@ -22,6 +42,17 @@ The build verifies the upstream Windows archive against a pinned SHA-256 and
 produces `build/RouteBar-windows-x64/RouteBar.exe` and
 `build/RouteBar-windows-x64.zip`. Keep all extracted files together. These local
 binaries are unsigned. Source retains the original macOS implementation.
+Keep `RouteBar.exe`, `routebar-v2.exe`, `sing-box.exe`, `libcronet.dll` and the
+included documentation/licenses together. Copy the whole folder to your desktop
+or create a shortcut; copying only the UI executable is insufficient. Exit the
+old app before upgrading (this disconnects its VPN). The title shows `0.2.1`,
+and `BUILD-INFO.json` records the build version, source commit and timestamp.
+The archive is assembled from an explicit file list, excluding personal profiles
+and settings even if they were placed beside the executable.
+To build beside a currently running version, use
+`scripts/test-windows.ps1 -AppDirectory build/RouteBar-windows-x64-0.2.1`, then
+`scripts/build-windows.ps1 -SkipRustBuild -OutputDirectory build/RouteBar-windows-x64-0.2.1`.
+This produces a separate versioned folder and ZIP without replacing running files.
 
 ## Use
 
@@ -145,10 +176,13 @@ The UI regression suite uses private temporary settings and fake connection
 lifecycles; it does not access personal profiles or start a system VPN. Its layout
 checks are control-bound/offscreen checks, not a real monitor-DPI or screen-reader
 acceptance test. Live WireGuard handshake, IPv4/IPv6 egress and UDP DNS have been
-checked separately with localhost-only proxy inbounds. That does not certify
-system TUN routing, UAC, or operation after disconnecting another VPN. Those
-checks remain acceptance tests on the target PC. The original macOS CLI is
-unchanged; macOS UI acceptance needs a Mac.
+checked separately with localhost-only proxy inbounds. A subsequent live system
+TUN check observed the VM's IPv4/IPv6 egress and working DNS; a split-routing check
+observed non-Codex traffic using the direct public address. Codex process rule
+matching was checked, but each subprocess's egress was not individually captured.
+These observations do not replace full UAC, rollback, route-cleanup and monitor-DPI
+acceptance testing. The original macOS CLI is unchanged; macOS UI acceptance needs
+a Mac.
 
 The bundled engine and its DLL retain upstream licenses. See
 `Licenses/THIRD_PARTY_NOTICES.md` in the package (or `THIRD_PARTY_NOTICES.md` in

@@ -1,7 +1,11 @@
-param([switch]$SkipRustBuild, [switch]$NoArchive)
+param([switch]$SkipRustBuild, [switch]$NoArchive, [string]$OutputDirectory)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$output = Join-Path $root 'build/RouteBar-windows-x64'
+$output = if ($OutputDirectory) {
+    if ([IO.Path]::IsPathRooted($OutputDirectory)) { $OutputDirectory } else { Join-Path $root $OutputDirectory }
+} else { Join-Path $root 'build/RouteBar-windows-x64' }
+$output = [IO.Path]::GetFullPath($output)
+$archiveOutput = Join-Path $root ('build/' + (Split-Path -Leaf $output) + '.zip')
 $cache = Join-Path $root '.tools/downloads'
 $version = '1.14.4'
 $archiveName = "sing-box-$version-windows-amd64.zip"
@@ -45,6 +49,8 @@ try {
         Copy-Item -LiteralPath 'LICENSE' -Destination (Join-Path $licenses 'RouteBar-LICENSE')
         Copy-Item -LiteralPath 'THIRD_PARTY_NOTICES.md' -Destination $licenses
         Copy-Item -LiteralPath 'docs/WINDOWS.md' -Destination (Join-Path $output 'README.md')
+        Copy-Item -LiteralPath 'docs/WINDOWS.zh-Hant.md' -Destination (Join-Path $output 'README.zh-Hant.md')
+        Copy-Item -LiteralPath 'windows/CHANGELOG.md' -Destination (Join-Path $output 'CHANGELOG.md')
         Copy-Item -LiteralPath 'windows/config.example.yaml' -Destination (Join-Path $output 'config.example.yaml')
     } finally {
         # Only this invocation's staging directory, resolved inside the download cache.
@@ -57,6 +63,36 @@ try {
     }
     & (Join-Path $output 'sing-box.exe') version
     if ($LASTEXITCODE -ne 0) { throw 'Bundled engine did not run.' }
-    if (-not $NoArchive) { Compress-Archive -Path "$output/*" -DestinationPath (Join-Path $root 'build/RouteBar-windows-x64.zip') -Force }
+    $buildInfo = [ordered]@{
+        version = [Diagnostics.FileVersionInfo]::GetVersionInfo($appExe).FileVersion
+        source_commit = (& git rev-parse HEAD)
+        source_dirty = [bool](& git status --porcelain)
+        built_at_utc = [DateTime]::UtcNow.ToString('o')
+        engine_version = $version
+    }
+    [IO.File]::WriteAllText((Join-Path $output 'BUILD-INFO.json'), ($buildInfo | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
+    if (-not $NoArchive) {
+        # Explicit distribution contents: never zip a personal profile/settings
+        # file someone placed beside the portable executable.
+        $files = @('RouteBar.exe', 'routebar-v2.exe', 'sing-box.exe', 'libcronet.dll',
+            'README.md', 'README.zh-Hant.md', 'CHANGELOG.md', 'BUILD-INFO.json', 'config.example.yaml',
+            'Licenses/RouteBar-LICENSE', 'Licenses/sing-box-LICENSE', 'Licenses/THIRD_PARTY_NOTICES.md')
+        $packageStage = Join-Path $cache ('package-' + [Guid]::NewGuid().ToString('N'))
+        try {
+            foreach ($relative in $files) {
+                $destination = Join-Path $packageStage $relative
+                New-Item -ItemType Directory -Force (Split-Path -Parent $destination) | Out-Null
+                Copy-Item -LiteralPath (Join-Path $output $relative) -Destination $destination
+            }
+            Compress-Archive -Path "$packageStage/*" -DestinationPath $archiveOutput -Force
+        } finally {
+            if (Test-Path -LiteralPath $packageStage) {
+                $resolvedPackage = (Resolve-Path -LiteralPath $packageStage).Path
+                $cacheRoot = (Resolve-Path -LiteralPath $cache).Path.TrimEnd('\') + '\'
+                if (-not $resolvedPackage.StartsWith($cacheRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe package staging path.' }
+                Remove-Item -LiteralPath $resolvedPackage -Recurse -Force
+            }
+        }
+    }
     Write-Output "Built $output/RouteBar.exe"
 } finally { Pop-Location }

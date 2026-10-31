@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
+[assembly: System.Reflection.AssemblyVersion("0.2.1.0")]
+[assembly: System.Reflection.AssemblyFileVersion("0.2.1.0")]
+
 namespace RouteBar.Windows
 {
     public sealed class Vpn { public string wireguard_config { get; set; } }
@@ -59,6 +62,25 @@ namespace RouteBar.Windows
         public Dns dns { get; set; }
         public Routing routing { get; set; }
         public Document() { version = 1; vpns = new Dictionary<string, Vpn>(); dns = new Dns(); routing = new Routing(); }
+    }
+    internal static class DefaultPreset
+    {
+        internal static Document Create(string root)
+        {
+            var doc = new Document();
+            doc.vpns.Add("vm1", new Vpn { wireguard_config = Path.Combine(root, "vm1.conf") });
+            doc.dns = new Dns { server = "1.1.1.1", via = "vm1", strategy = "prefer_ipv4" };
+            doc.routing.rules.Add(new Rule { name = "codex", via = "vm1", match = new Selectors {
+                process_names = new[] { "ChatGPT.exe", "codex.exe", "codex-code-mode-host.exe" } } });
+            return doc;
+        }
+        internal static bool NeedsProfile(Document doc, string root)
+        {
+            Vpn vpn;
+            return doc.vpns.TryGetValue("vm1", out vpn) &&
+                string.Equals(vpn.wireguard_config, Path.Combine(root, "vm1.conf"), StringComparison.OrdinalIgnoreCase) &&
+                !File.Exists(vpn.wireguard_config);
+        }
     }
     internal static class Store
     {
@@ -152,6 +174,7 @@ namespace RouteBar.Windows
         internal AppServices(string root, Func<string[], string> call) { Root = Path.GetFullPath(root); Call = call; }
         internal static AppServices Production() { return new AppServices(Store.Root, args => Backend.Call(args)); }
         internal Document Load(string path) { return Store.Json().Deserialize<Document>(Call(new[] { "config-inspect", "-c", path })); }
+        internal Document LoadOrDefault() { return File.Exists(ConfigPath) ? Load(ConfigPath) : DefaultPreset.Create(Root); }
         internal Document Normalize(Document candidate)
         {
             Store.PrivateDirectory(Root);
@@ -406,7 +429,7 @@ namespace RouteBar.Windows
         internal MainForm(AppServices appServices, bool initializeServices, bool autoConnect, InstanceLease instance)
         {
             services = appServices; initialize = initializeServices; connectOnLoad = autoConnect; lease = instance;
-            Text = "RouteBar for Windows"; Font = new Font("Segoe UI", 10); AutoScaleDimensions = new SizeF(7F, 19F); AutoScaleMode = AutoScaleMode.Font;
+            Text = "RouteBar for Windows 0.2.1"; Font = new Font("Segoe UI", 10); AutoScaleDimensions = new SizeF(7F, 19F); AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1080, 760); MinimumSize = new Size(760, 560); StartPosition = FormStartPosition.CenterScreen; BackColor = SystemColors.Control;
             var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(20), RowCount = 7, ColumnCount = 1 };
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -462,7 +485,11 @@ namespace RouteBar.Windows
                 tray.Icon = SystemIcons.Application; tray.Visible = true; var menu = new ContextMenuStrip();
                 menu.Items.Add("Show RouteBar", null, (s, e) => ShowWindow()); menu.Items.Add("Disconnect", null, async (s, e) => await Disconnect()); menu.Items.Add("Exit and disconnect", null, (s, e) => Close());
                 tray.ContextMenuStrip = menu; tray.DoubleClick += (s, e) => ShowWindow(); Resize += (s, e) => { if (WindowState == FormWindowState.Minimized) Hide(); };
-                Shown += async (s, e) => { bool loaded = await Work(() => { Store.PrivateDirectory(services.Root); if (File.Exists(services.ConfigPath)) document = services.Load(services.ConfigPath); savedDocument = Serialize(document); }, "Settings loaded", true); if (loaded && connectOnLoad) await Connect(); };
+                Shown += async (s, e) => {
+                    bool loaded = await Work(() => { Store.PrivateDirectory(services.Root); document = services.LoadOrDefault(); savedDocument = File.Exists(services.ConfigPath) ? Serialize(document) : ""; }, "Settings loaded", true);
+                    if (loaded && DefaultPreset.NeedsProfile(document, services.Root)) status.Text = "Setup required: import a WireGuard profile in VPN exits to activate vm1. Codex routing is already prepared.";
+                    if (loaded && connectOnLoad) await Connect();
+                };
                 timer.Tick += (s, e) => {
                     if (lease != null && lease.ActivationRequested) ShowWindow();
                     if (!busy && active != null && !active.IsRunning) { var ended = active; active = null; ConnectionTransaction.Cleanup(ended, Log); status.Text = "Disconnected: engine stopped unexpectedly. See Logs."; UpdateState(); }
@@ -575,6 +602,12 @@ namespace RouteBar.Windows
             while (names.Contains(tag)) { string suffix = "-" + n++; tag = stem.Substring(0, Math.Min(stem.Length, 64 - suffix.Length)) + suffix; }
             return tag;
         }
+        internal static string ProfileImportTag(Document candidate, string root, string file)
+        {
+            // The first import fills the unresolved vm1 preset; subsequent imports
+            // receive unique names and never replace an existing working profile.
+            return DefaultPreset.NeedsProfile(candidate, root) ? "vm1" : ProfileTag(file, candidate.vpns.Keys);
+        }
         internal Task<Rule> ValidateRuleDraft(Rule rule, int index)
         {
             var candidate = CaptureDraft(); if (index >= 0) candidate.routing.rules[index] = rule; else candidate.routing.rules.Add(rule);
@@ -605,12 +638,12 @@ namespace RouteBar.Windows
             {
                 if (dialog.ShowDialog(this) != DialogResult.OK) return; string file = dialog.FileName; var candidate = CaptureDraft();
                 await Work(() => {
-                    Store.PrivateDirectory(services.Root); string tag = ProfileTag(file, candidate.vpns.Keys);
+                    Store.PrivateDirectory(services.Root); string tag = ProfileImportTag(candidate, services.Root, file);
                     string target = Path.Combine(services.Root, "profile-" + Guid.NewGuid().ToString("N") + ".conf"); bool saved = false;
                     try
                     {
                         if (new FileInfo(file).Length > 128 * 1024) throw new IOException("WireGuard profile exceeds 128 KiB.");
-                        Store.Write(target, File.ReadAllText(file)); candidate.vpns.Add(tag, new Vpn { wireguard_config = target });
+                        Store.Write(target, File.ReadAllText(file)); candidate.vpns[tag] = new Vpn { wireguard_config = target };
                         var normalized = services.Normalize(candidate); using (var check = new Connection(normalized, services)) ShowWarnings(check.Warnings);
                         services.Save(normalized); document = normalized; savedDocument = Serialize(normalized); saved = true;
                     }

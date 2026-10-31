@@ -4,6 +4,13 @@ A native macOS and Windows app for sending selected applications and websites th
 
 ## Windows version (this fork)
 
+**Windows 0.2.1 default:** Codex processes (`ChatGPT.exe`, `codex.exe`,
+`codex-code-mode-host.exe`) route through `vm1`; other traffic is direct; DNS
+uses `vm1`. First launch prepares these rules and asks for your private WireGuard
+profile. Existing saved settings are preserved. No personal profiles or keys
+are included. [Traditional Chinese guide](docs/WINDOWS.zh-Hant.md) ·
+[Windows changelog](windows/CHANGELOG.md)
+
 This fork adds a native Windows 10/11 x64 desktop client, Windows path matching,
 ACL-protected configuration, foreground VPN lifecycle with rollback, a portable
 build script, and Windows CI. The original macOS app remains available.

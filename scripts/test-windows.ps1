@@ -1,10 +1,12 @@
-param([switch]$SkipBuild)
+param([switch]$SkipBuild, [string]$AppDirectory)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
+if (-not $AppDirectory) { $AppDirectory = Join-Path $root 'build/RouteBar-windows-x64' }
+elseif (-not [IO.Path]::IsPathRooted($AppDirectory)) { $AppDirectory = Join-Path $root $AppDirectory }
 Push-Location $root
 try {
-    if (-not $SkipBuild) { & "$PSScriptRoot/build-windows.ps1" -NoArchive }
-    $engine = (Resolve-Path -LiteralPath 'build/RouteBar-windows-x64/sing-box.exe').Path
+    if (-not $SkipBuild) { & "$PSScriptRoot/build-windows.ps1" -NoArchive -OutputDirectory $AppDirectory }
+    $engine = (Resolve-Path -LiteralPath (Join-Path $AppDirectory 'sing-box.exe')).Path
     $oldEngine = $env:ROUTEBAR_TEST_ENGINE
     try {
         $env:ROUTEBAR_TEST_ENGINE = $engine
@@ -17,10 +19,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Formatting check failed.' }
     & rustfmt --check controller/src/windows/cli.rs
     if ($LASTEXITCODE -ne 0) { throw 'Windows CLI formatting check failed.' }
-    & python scripts/test-windows-integration.py
+    & python scripts/test-windows-integration.py --app-directory $AppDirectory
     if ($LASTEXITCODE -ne 0) { throw 'Windows integration checks failed.' }
     $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
-    $testExe = Join-Path $root 'build\RouteBar-windows-x64\RouteBar.Tests.exe'
+    $testExe = Join-Path $AppDirectory 'RouteBar.Tests.exe'
     $source = (Resolve-Path -LiteralPath 'windows/RouteBar.cs').Path
     & $compiler /nologo /target:exe /platform:x64 /warnaserror+ "/out:$testExe" /reference:System.Windows.Forms.dll /reference:System.Drawing.dll /reference:System.Web.Extensions.dll $source
     if ($LASTEXITCODE -ne 0) { throw 'UI test build failed.' }
@@ -28,7 +30,7 @@ try {
         & $testExe --self-test
         if ($LASTEXITCODE -ne 0) { throw 'UI self-test failed.' }
     } finally { if (Test-Path -LiteralPath $testExe) { Remove-Item -LiteralPath $testExe } }
-    & "$PSScriptRoot/test-windows-ui.ps1"
+    & "$PSScriptRoot/test-windows-ui.ps1" -AppDirectory $AppDirectory
     & git diff --check
     if ($LASTEXITCODE -ne 0) { throw 'Whitespace check failed.' }
     Write-Output 'Windows checks passed. No system VPN was started.'
